@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DivX } from "@/component/divx.tsx";
+import { IconArrowDown } from "@/component/icons.tsx";
 
 type SelectProps<Value> = {
     className?: string,
@@ -9,7 +10,7 @@ type SelectProps<Value> = {
 }
 
 function Select<Value>({
-    className = '',
+    className = 'w-full h-8',
     value,
     items,
     onChange
@@ -32,11 +33,12 @@ function Select<Value>({
 
     return (
         <DivX className={ `relative ${ className }` } onClickOut={ () => setFold(true) }>
-            <button
-                className={ 'w-full h-full px-2 border rounded bg-white hover:bg-gray-50 text-gray-900 text-sm truncate' }
+            <div
+                className={ 'w-full h-full px-2 border rounded bg-white hover:bg-gray-50 text-gray-900 text-sm cursor-pointer flex items-center' }
                 title={ v[0] } onClick={ () => setFold(v => !v) }>
-                { v[0] }
-            </button>
+                <span className={ 'flex-1 truncate' }>{ v[0] }</span>
+                <IconArrowDown className={ 'float-right' }/>
+            </div>
 
             {
                 fold ? null : (
@@ -47,7 +49,7 @@ function Select<Value>({
                                 return (
                                     <div key={ k }
                                          className={
-                                             'w-full h-9 px-1 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm text-center leading-[36px] truncate'
+                                             'w-full h-9 px-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm leading-[36px] truncate'
                                          }
                                          title={ k }
                                          onClick={ () => handleSelect(k, v) }>
