@@ -9,7 +9,7 @@ type SelectProps<Value> = {
 }
 
 function Select<Value>({
-    className = 'h-8 border rounded',
+    className = '',
     value,
     items,
     onChange
@@ -33,7 +33,7 @@ function Select<Value>({
     return (
         <DivX className={ `relative ${ className }` } onClickOut={ () => setFold(true) }>
             <button
-                className={ 'w-full h-full px-1 border rounded bg-white hover:bg-gray-50 text-gray-900 text-sm truncate' }
+                className={ 'w-full h-full px-2 border rounded bg-white hover:bg-gray-50 text-gray-900 text-sm truncate' }
                 title={ v[0] } onClick={ () => setFold(v => !v) }>
                 { v[0] }
             </button>
