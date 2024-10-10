@@ -1,4 +1,4 @@
-import { SchemaNode, SchemaRoot } from "@/declare";
+import { SchemaNode, SchemaRoot } from "@/utils";
 import { IconAdd, IconCreateSub, IconRemove } from "@/component/icons.tsx";
 import { useRefresher } from "@/hook.ts";
 import { v4 } from "uuid";
