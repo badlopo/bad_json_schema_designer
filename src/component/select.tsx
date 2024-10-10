@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DivX } from "@/component/divx.tsx";
-import { IconArrowDown } from "@/component/icons.tsx";
+import { IconArrowDown, IconCheck } from "@/component/icons.tsx";
 
 type SelectProps<Value> = {
     className?: string,
@@ -49,11 +49,13 @@ function Select<Value>({
                                 return (
                                     <div key={ k }
                                          className={
-                                             'w-full h-9 px-2 hover:bg-gray-100 cursor-pointer text-gray-700 text-sm leading-[36px] truncate'
+                                             'w-full h-9 px-2 hover:bg-gray-100 cursor-pointer flex items-center'
                                          }
-                                         title={ k }
-                                         onClick={ () => handleSelect(k, v) }>
-                                        { k }
+                                         title={ k } onClick={ () => handleSelect(k, v) }>
+                                        <span className={ 'flex-1 text-gray-700 text-sm leading-[36px] truncate' }>
+                                            { k }
+                                        </span>
+                                        { v === value ? <IconCheck className={ 'text-blue-700 text-[14px]' }/> : null }
                                     </div>
                                 )
                             })
