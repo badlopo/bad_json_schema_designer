@@ -1,5 +1,5 @@
 import { SchemaNode, SchemaRoot } from "@/declare";
-import { IconCreateSub, IconRemove } from "@/component/icons.tsx";
+import { IconAdd, IconCheck, IconCreateSub, IconRemove } from "@/component/icons.tsx";
 import { useRefresher } from "@/hook.ts";
 import { v4 } from "uuid";
 import { Input } from "@/component/input.tsx";
@@ -14,6 +14,19 @@ const TYPE_CANDIDATES = {
     'Array': 'array',
 }
 
+const SchemaTreeHeader = () => {
+    return (
+        <div className={ 'w-full h-8 text-gray-500 text-[12px] flex items-center' }>
+            <div className={ 'w-5' }/>
+            <div className={ 'flex-1' }>变量名</div>
+            <div className={ 'w-40 ml-2' }>变量类型</div>
+            <div className={ 'w-8 ml-2 text-center' }>必需</div>
+            <div className={ 'w-4 ml-2' }/>
+            <div className={ 'w-4 ml-2' }/>
+        </div>
+    )
+}
+
 type SchemaTreeNodeProps = {
     depth: number
     node: SchemaNode
@@ -22,6 +35,8 @@ type SchemaTreeNodeProps = {
 
 const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps) => {
     const refresh = useRefresher()
+
+    const children = !!node.properties ? Object.entries(node.properties) : null
 
     const modifyName = (name: string) => {
         node.name = name
@@ -34,6 +49,11 @@ const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps)
         // clear properties if type is not object
         if(type !== 'object') node.properties = undefined
 
+        refresh()
+    }
+
+    const modifyRequired = () => {
+        node.required = !node.required
         refresh()
     }
 
@@ -56,32 +76,60 @@ const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps)
     return (
         <>
             <div className={ 'w-full h-8 mb-2 flex items-center' }>
+                {/* indent */ }
                 { depth > 0 && <div style={ { width: depth * 8 } }/> }
 
-                {/* TODO: prefix arrow + link line */ }
-
-                <Input className={ 'flex-1 h-full' } value={ node.name } onChange={ modifyName }/>
-
-                <Select className={ 'w-40 h-8' } items={ TYPE_CANDIDATES }
-                        value={ node.type } onChange={ modifyType }/>
-
-                <div className={ 'w-4 mx-2' }>
+                {/* dot & link */ }
+                <div className={ 'w-3 mr-2' }>
                     {
-                        node.type === 'object' ? (
-                            <IconCreateSub className={ 'text-blue-700' } onClick={ handleCreateSub }/>) : null
+                        depth > 0 ? (
+                            <div
+                                className={ 'relative w-3 h-10 border-l border-b rounded-bl border-gray-300 -translate-y-1/2' }>
+                                <div
+                                    className={ 'absolute -top-[3px] -left-[3px] w-[6px] h-[6px] rounded-full bg-gray-700' }/>
+                            </div>
+                        ) : null
                     }
                 </div>
 
-                <IconRemove className={ 'text-[16px] text-gray-700' } onClick={ onRemoveClick }/>
+                <Input
+                    className={ 'flex-1 h-full' } placeholder={ '请输入变量名' }
+                    value={ node.name } onChange={ modifyName }/>
+
+                <Select className={ 'w-40 h-8 ml-2' } items={ TYPE_CANDIDATES }
+                        value={ node.type } onChange={ modifyType }/>
+
+                <div
+                    className={ 'w-8 h-8 ml-2 text-gray-700 text-[14px] border rounded bg-white cursor-pointer flex items-center justify-center' }
+                    onClick={ modifyRequired }>
+                    { node.required ? <IconCheck/> : null }
+                </div>
+
+                <div className={ 'w-4 ml-2' }
+                     data-tooltip-id={ 'tooltip-common' }
+                     data-tooltip-content={ '新增子项' }>
+                    {
+                        node.type === 'object' ? (
+                            <IconCreateSub
+                                className={ 'text-[16px] text-gray-500' }
+                                onClick={ handleCreateSub }/>
+                        ) : null
+                    }
+                </div>
+
+                <div
+                    className={ 'w-4 ml-2' }
+                    data-tooltip-id={ 'tooltip-common' }
+                    data-tooltip-content={ '移除' }>
+                    <IconRemove className={ 'text-[16px] text-gray-500' } onClick={ onRemoveClick }/>
+                </div>
             </div>
             {
-                node.properties ? (
-                    Object.entries(node.properties).map(([ k, v ]) => {
-                        return <SchemaTreeNode
-                            key={ k } depth={ depth + 1 } node={ v }
-                            onRemoveClick={ () => removeProperty(k) }/>
-                    })
-                ) : null
+                children?.map(([ k, v ]) => {
+                    return <SchemaTreeNode
+                        key={ k } depth={ depth + 1 } node={ v }
+                        onRemoveClick={ () => removeProperty(k) }/>
+                })
             }
         </>
     )
@@ -106,6 +154,7 @@ const SchemaTree = ({ tree }: { tree: SchemaRoot }) => {
 
     return (
         <>
+            <SchemaTreeHeader/>
             {
                 Object.entries(tree.properties)
                     .map(([ k, v ]) => {
@@ -114,11 +163,16 @@ const SchemaTree = ({ tree }: { tree: SchemaRoot }) => {
                             onRemoveClick={ () => handleRemove(k) }/>
                     })
             }
-            <button className={
-                'h-8 px-2 border rounded bg-white hover:bg-gray-50 text-gray-900 text-sm'
-            } onClick={ handleCreateSub }>
-                新增
-            </button>
+            <div className={ 'h-8 flex items-center' }>
+                <div className={ 'w-3 mr-2' }/>
+
+                <button
+                    className={ 'h-8 px-2 border rounded bg-white hover:bg-gray-50 text-gray-700 text-[12px] leading-3 flex items-center' }
+                    onClick={ handleCreateSub }>
+                    <IconAdd className={ 'mr-1' }/>
+                    <span>新增</span>
+                </button>
+            </div>
         </>
     )
 }

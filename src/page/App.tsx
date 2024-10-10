@@ -1,8 +1,6 @@
 import { Select } from "@/component/select.tsx";
 import { SchemaTree } from "@/prefab/schema_tree.tsx";
 import { SchemaRoot } from "@/declare";
-import { Input } from "@/component/input.tsx";
-import { useState } from "react";
 
 const schema_example = {
     properties: {
@@ -51,8 +49,6 @@ const schema_example = {
 } satisfies SchemaRoot
 
 function App() {
-    const [ t, setT ] = useState('')
-
     return (
         <div className={ 'p-4' }>
             hi there <br/><br/>
@@ -79,16 +75,7 @@ function App() {
             } }>log it
             </button>
 
-            <br/>
-            <br/>
-            <span>{ t }</span>
-            <br/>
-            <br/>
-
-            <br/>
-            <Input className={ 'w-40 h-8 border rounded' } value={ t } placeholder={ '请输入名称' } onChange={ setT }/>
-            <div className={ 'w-[500px] p-4 bg-gray-50' }>
-                <br/>
+            <div className={ 'w-[800px] bg-gray-100' }>
                 <SchemaTree tree={ schema_example }/>
             </div>
         </div>
