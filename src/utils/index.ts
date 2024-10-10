@@ -55,6 +55,8 @@ const build_schema_segment = (node: SchemaNode) => {
 
             const required: string[] = []
             for (const property of properties) {
+                if(property.name === '') continue
+
                 segment.properties[property.name] = build_schema_segment(property)
                 if(property.required) required.push(property.name)
             }
@@ -85,6 +87,8 @@ class SchemaBuilder {
 
         const required: string[] = []
         for (const property of Object.values(this.#schema.properties)) {
+            if(property.name === '') continue
+
             schema.properties[property.name] = build_schema_segment(property)
             if(property.required) required.push(property.name)
         }
