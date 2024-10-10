@@ -1,5 +1,5 @@
 import { SchemaNode, SchemaRoot } from "@/declare";
-import { IconAdd, IconCheck, IconCreateSub, IconRemove } from "@/component/icons.tsx";
+import { IconAdd, IconCreateSub, IconRemove } from "@/component/icons.tsx";
 import { useRefresher } from "@/hook.ts";
 import { v4 } from "uuid";
 import { Input } from "@/component/input.tsx";
@@ -19,7 +19,8 @@ const SchemaTreeHeader = () => {
         <div className={ 'w-full h-8 text-gray-500 text-[12px] flex items-center' }>
             <div className={ 'w-5' }/>
             <div className={ 'flex-1' }>变量名</div>
-            <div className={ 'w-40 ml-2' }>变量类型</div>
+            <div className={ 'w-28 ml-2' }>变量类型</div>
+            <div className={ 'w-40 ml-2' }>备注</div>
             <div className={ 'w-8 ml-2 text-center' }>必需</div>
             <div className={ 'w-4 ml-2' }/>
             <div className={ 'w-4 ml-2' }/>
@@ -49,6 +50,11 @@ const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps)
         // clear properties if type is not object
         if(type !== 'object') node.properties = undefined
 
+        refresh()
+    }
+
+    const modifyComment = (comment: string) => {
+        node.comment = comment
         refresh()
     }
 
@@ -93,16 +99,20 @@ const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps)
                 </div>
 
                 <Input
-                    className={ 'flex-1 h-full' } placeholder={ '请输入变量名' }
+                    className={ 'flex-1 h-8' } placeholder={ '请输入变量名' }
                     value={ node.name } onChange={ modifyName }/>
 
-                <Select className={ 'w-40 h-8 ml-2' } items={ TYPE_CANDIDATES }
+                <Select className={ 'w-28 h-8 ml-2' } items={ TYPE_CANDIDATES }
                         value={ node.type } onChange={ modifyType }/>
+
+                <Input
+                    className={ 'w-40 h-8 ml-2' } placeholder={ '请输入备注' }
+                    value={ node.comment ?? '' } onChange={ modifyComment }/>
 
                 <div
                     className={ 'w-8 h-8 ml-2 text-gray-700 text-[14px] border rounded bg-white cursor-pointer flex items-center justify-center' }
                     onClick={ modifyRequired }>
-                    { node.required ? <IconCheck/> : null }
+                    { node.required ? <div className={ 'w-3 h-3 rounded-sm bg-gray-700' }/> : null }
                 </div>
 
                 <div className={ 'w-4 ml-2' }
