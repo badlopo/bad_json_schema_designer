@@ -55,7 +55,7 @@ function Select<Value>({
                                         <span className={ 'flex-1 text-gray-700 text-sm leading-[36px] truncate' }>
                                             { k }
                                         </span>
-                                        { v === value ? <IconCheck className={ 'text-blue-700 text-[14px]' }/> : null }
+                                        { v === value ? <IconCheck className={ 'text-gray-700 text-[14px]' }/> : null }
                                     </div>
                                 )
                             })
