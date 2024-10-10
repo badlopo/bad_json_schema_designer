@@ -1,19 +1,20 @@
 import { Select } from "@/component/select.tsx";
 import { SchemaTree } from "@/prefab/schema_tree.tsx";
-import { SchemaRoot } from "@/declare";
+import { SchemaBuilder, SchemaRoot } from "@/utils";
+import { useState } from "react";
 
 const schema_example = {
     properties: {
         'p1': {
             name: 'name',
             type: 'string',
-            comment: 'name of the person',
+            comment: '',
             required: true
         },
         'p2': {
             name: 'age',
             type: 'number',
-            comment: 'age of the person',
+            comment: '',
             required: true
         },
         'p3': {
@@ -48,7 +49,11 @@ const schema_example = {
     },
 } satisfies SchemaRoot
 
+const builder = new SchemaBuilder(schema_example)
+
 function App() {
+    const [ schema, setSchema ] = useState(builder.build())
+
     return (
         <div className={ 'p-4' }>
             hi there <br/><br/>
@@ -71,12 +76,16 @@ function App() {
                 } }/>
 
             <button onClick={ () => {
-                console.log(schema_example)
+                console.log(builder.build())
             } }>log it
             </button>
 
-            <div className={ 'w-[800px] bg-gray-100' }>
-                <SchemaTree tree={ schema_example }/>
+            <div className={ 'w-[600px] bg-gray-100' }>
+                <SchemaTree tree={ builder.schema } onUpdated={ () => setSchema(builder.build()) }/>
+            </div>
+
+            <div className={ 'whitespace-pre' }>
+                { JSON.stringify(schema, null, 4) }
             </div>
         </div>
     )
