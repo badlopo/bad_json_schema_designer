@@ -31,11 +31,16 @@ const SchemaTreeHeader = () => {
 type SchemaTreeNodeProps = {
     depth: number
     node: SchemaNode
-    onRemoveClick: () => void
+    onUpdated?: VoidFunction
+    onRemoveClick: VoidFunction
 }
 
-const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps) => {
-    const refresh = useRefresher()
+const SchemaTreeNode = ({ depth = 0, node, onUpdated, onRemoveClick }: SchemaTreeNodeProps) => {
+    const _refresh = useRefresher()
+    const refresh = () => {
+        _refresh()
+        onUpdated?.()
+    }
 
     const children = !!node.properties ? Object.entries(node.properties) : null
 
@@ -138,6 +143,7 @@ const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps)
                 children?.map(([ k, v ]) => {
                     return <SchemaTreeNode
                         key={ k } depth={ depth + 1 } node={ v }
+                        onUpdated={ onUpdated }
                         onRemoveClick={ () => removeProperty(k) }/>
                 })
             }
@@ -145,8 +151,17 @@ const SchemaTreeNode = ({ depth = 0, node, onRemoveClick }: SchemaTreeNodeProps)
     )
 }
 
-const SchemaTree = ({ tree }: { tree: SchemaRoot }) => {
-    const refresh = useRefresher()
+type SchemaTreeProps = {
+    tree: SchemaRoot
+    onUpdated?: VoidFunction
+}
+
+const SchemaTree = ({ tree, onUpdated }: SchemaTreeProps) => {
+    const _refresh = useRefresher()
+    const refresh = () => {
+        _refresh()
+        onUpdated?.()
+    }
 
     const handleCreateSub = () => {
         tree.properties[v4()] = {
@@ -170,6 +185,7 @@ const SchemaTree = ({ tree }: { tree: SchemaRoot }) => {
                     .map(([ k, v ]) => {
                         return <SchemaTreeNode
                             key={ k } depth={ 0 } node={ v }
+                            onUpdated={ onUpdated }
                             onRemoveClick={ () => handleRemove(k) }/>
                     })
             }

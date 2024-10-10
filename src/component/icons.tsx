@@ -1,6 +1,6 @@
 type IconProps = {
     className?: string
-    onClick?: () => void
+    onClick?: VoidFunction
 }
 
 const IconAdd = ({ className, onClick }: IconProps) => {
