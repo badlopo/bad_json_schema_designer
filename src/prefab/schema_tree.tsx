@@ -9,14 +9,16 @@ import { Select } from "@/component/select.tsx";
 const TYPE_CANDIDATES = {
     'String': 'string',
     'Number': 'number',
-    'Boolean': 'boolean',
+    'Integer': 'integer',
     'Object': 'object',
     'Array': 'array',
+    'Boolean': 'boolean',
+    'Null': 'null',
 }
 
 const SchemaTreeHeader = () => {
     return (
-        <div className={ 'w-full h-8 text-gray-500 text-[12px] flex items-center' }>
+        <div className={ 'sticky z-10 top-0 w-full h-8 bg-white text-gray-500 text-[12px] flex items-center' }>
             <div className={ 'w-5' }/>
             <div className={ 'flex-1' }>变量名</div>
             <div className={ 'w-28 ml-2' }>变量类型</div>
