@@ -74,6 +74,17 @@ class SchemaBuilder {
         return this.#schema
     }
 
+    public static restore(id: string) {
+        const cache = localStorage.getItem(id)
+        if(!cache) return new SchemaBuilder()
+        try {
+            return new SchemaBuilder(JSON.parse(cache))
+        } catch (err) {
+            console.error('failed to parse cache:', err)
+            return new SchemaBuilder()
+        }
+    }
+
     constructor(root?: SchemaRoot) {
         this.#schema = root || { properties: {} }
     }
