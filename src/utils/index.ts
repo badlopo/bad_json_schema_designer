@@ -68,33 +68,53 @@ const build_schema_segment = (node: SchemaNode) => {
 }
 
 class SchemaBuilder {
-    readonly #schema: SchemaRoot
+    readonly #id: string
+
+    public get id(): string {
+        return this.#id
+    }
+
+    #schema: SchemaRoot
 
     public get schema(): SchemaRoot {
         return this.#schema
     }
 
-    public static restore(id: string) {
-        const cache = localStorage.getItem(id)
-        if(!cache) return new SchemaBuilder()
-        try {
-            return new SchemaBuilder(JSON.parse(cache))
-        } catch (err) {
-            console.error('failed to parse cache:', err)
-            return new SchemaBuilder()
+    /**
+     * load schema from local storage with given id,
+     * or create a new one if not found and save it to local storage
+     */
+    public static fromId(id: string) {
+        const tree = localStorage.getItem(`@schema/${ id }`)
+
+        if(!!tree) {
+            try {
+                return new SchemaBuilder(id, JSON.parse(tree))
+            } catch (err) {
+                console.error('failed to parse cache:', err)
+            }
         }
+
+        const builder = new SchemaBuilder(id)
+        builder.save()
+        return builder
     }
 
-    constructor(root?: SchemaRoot) {
+    constructor(id: string, root?: SchemaRoot) {
+        this.#id = id
         this.#schema = root || { properties: {} }
     }
 
     /**
-     * build the schema from config
+     * build schema from current schema tree
      */
     public build() {
         // TODO: more meta data
-        const schema: Record<string, any> = { properties: {} }
+        const schema: Record<string, any> = {
+            $schema: 'https://json-schema.org/draft/2020-12/schema',
+            type: 'object',
+            properties: {}
+        }
 
         const required: string[] = []
         for (const property of Object.values(this.#schema.properties)) {
@@ -106,6 +126,29 @@ class SchemaBuilder {
         if(required.length !== 0) schema.required = required
 
         return schema
+    }
+
+    /**
+     * restore the schema from local storage, ignore all changes made
+     */
+    public restore() {
+        const tree = localStorage.getItem(`@schema/${ this.#id }`)
+        if(!!tree) {
+            try {
+                this.#schema = JSON.parse(tree)
+                return true
+            } catch (err) {
+                console.error('failed to parse cache:', err)
+            }
+        }
+        return false
+    }
+
+    /**
+     * save the schema to local storage (overwrite if exists)
+     */
+    public save() {
+        localStorage.setItem(`@schema/${ this.#id }`, JSON.stringify(this.#schema))
     }
 }
 
