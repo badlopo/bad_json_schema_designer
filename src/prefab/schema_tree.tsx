@@ -20,7 +20,7 @@ const SchemaTreeHeader = () => {
     return (
         <div className={ 'sticky z-10 top-0 w-full h-8 bg-white text-gray-500 text-[12px] flex items-center' }>
             <div className={ 'w-5' }/>
-            <div className={ 'flex-1' }>变量名</div>
+            <div className={ 'min-w-28 flex-1' }>变量名</div>
             <div className={ 'w-28 ml-2' }>变量类型</div>
             <div className={ 'w-40 ml-2' }>备注</div>
             <div className={ 'w-8 ml-2 text-center' }>必需</div>

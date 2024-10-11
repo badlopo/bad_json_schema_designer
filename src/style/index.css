@@ -12,13 +12,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    flex-shrink: 0;
 
     &::-webkit-scrollbar {
         width: 8px;
+        height: 8px;
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: #efefef;
+        background-color: #e7e7e7;
         border-radius: 4px;
     }
 }

@@ -3,11 +3,19 @@ import { SchemaBuilder } from "@/utils";
 import { SchemaTree } from "@/prefab/schema_tree.tsx";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
+import { Input } from "@/component/input.tsx";
 
 const DesignPage = () => {
-    const navigator = useNavigate()
     const builder = useLoaderData() as SchemaBuilder
+
+    const navigator = useNavigate()
+
     const [ schema, setSchema ] = useState(builder.build())
+
+    const handleModifyMeta = (key: 'title' | 'description', value: string) => {
+        builder.schema[key] = value
+        setSchema(builder.build())
+    }
 
     const handleUpdate = () => {
         if(!document.title.endsWith(' *')) {
@@ -49,15 +57,22 @@ const DesignPage = () => {
 
     return (
         <div className={ 'w-full h-full' }>
-            <div className={ 'w-full h-[calc(100%-48px)] flex items-start' }>
-                <div className={ 'flex-1 h-full px-4 overflow-y-auto' }>
-                    <SchemaTree tree={ builder.schema } onUpdated={ handleUpdate }/>
+            <div className={ 'w-full h-12 px-4 border-b text-[14px] flex items-center space-x-2' }>
+                <div>
+                    <Input
+                        className={ 'w-28 h-8' }
+                        value={ builder.schema.title ?? '' }
+                        placeholder={ '标题 (可选)' }
+                        onChange={ s => handleModifyMeta('title', s) }/>
+                    <Input
+                        className={ 'w-60 h-8 ml-2' }
+                        value={ builder.schema.description ?? '' }
+                        placeholder={ '描述 (可选)' }
+                        onChange={ s => handleModifyMeta('description', s) }/>
                 </div>
-                <div className={ 'flex-1 h-full px-4 overflow-auto' }>
-                    <pre>{ JSON.stringify(schema, null, 4) }</pre>
-                </div>
-            </div>
-            <div className={ 'w-full h-12 px-4 border-t text-[14px] flex items-center justify-end space-x-2' }>
+
+                <div className="flex-1"/>
+
                 <button
                     className={ 'h-8 px-2 rounded bg-green-100 hover:bg-green-200 text-green-700' }
                     data-tooltip-id={ 'tooltip-common' }
@@ -86,6 +101,14 @@ const DesignPage = () => {
                     onClick={ handleSave }>
                     保存
                 </button>
+            </div>
+            <div className={ 'w-full h-[calc(100%-48px)] flex items-start' }>
+                <div className={ 'flex-1 h-full px-4 overflow-y-auto' }>
+                    <SchemaTree tree={ builder.schema } onUpdated={ handleUpdate }/>
+                </div>
+                <div className={ 'flex-1 h-full px-4 border-l overflow-auto' }>
+                    <pre>{ JSON.stringify(schema, null, 4) }</pre>
+                </div>
             </div>
         </div>
     )

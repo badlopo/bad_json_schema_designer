@@ -42,7 +42,11 @@ type SchemaNode = {
     properties?: { [pid: string]: SchemaNode }
 }
 
-type SchemaRoot = { properties: { [pid: string]: SchemaNode } }
+type SchemaRoot = {
+    title?: string
+    description?: string
+    properties: { [pid: string]: SchemaNode }
+}
 
 const build_schema_segment = (node: SchemaNode) => {
     const segment: Record<string, any> = { type: node.type }
@@ -109,15 +113,19 @@ class SchemaBuilder {
      * build schema from current schema tree
      */
     public build() {
-        // TODO: more meta data
         const schema: Record<string, any> = {
             $schema: 'https://json-schema.org/draft/2020-12/schema',
             type: 'object',
-            properties: {}
         }
 
+        if(this.#schema.title) schema.title = this.#schema.title
+        if(this.#schema.description) schema.description = this.#schema.description
+
+        const properties = Object.values(this.#schema.properties)
+        if(properties.length !== 0) schema.properties = {}
+
         const required: string[] = []
-        for (const property of Object.values(this.#schema.properties)) {
+        for (const property of properties) {
             if(property.name === '') continue
 
             schema.properties[property.name] = build_schema_segment(property)
