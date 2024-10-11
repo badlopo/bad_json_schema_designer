@@ -8,7 +8,7 @@ import { Input } from "@/component/input.tsx";
 const DesignPage = () => {
     const builder = useLoaderData() as SchemaBuilder
 
-    const navigator = useNavigate()
+    const navigate = useNavigate()
 
     const [ schema, setSchema ] = useState(builder.build())
 
@@ -43,7 +43,7 @@ const DesignPage = () => {
     }
 
     const handleExit = () => {
-        navigator(-1)
+        navigate('/home')
     }
 
     const handleSave = () => {

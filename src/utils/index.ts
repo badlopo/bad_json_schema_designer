@@ -72,6 +72,50 @@ const build_schema_segment = (node: SchemaNode) => {
 }
 
 class SchemaBuilder {
+    /**
+     * load schema from local storage with given id,
+     * or create a new one if not found and save it to local storage
+     */
+    public static fromId(id: string) {
+        const root = localStorage.getItem(`@schema/${ id }`)
+
+        if(!!root) {
+            try {
+                return new SchemaBuilder(id, JSON.parse(root))
+            } catch (err) {
+                console.error('failed to parse cache:', err)
+            }
+        }
+
+        const builder = new SchemaBuilder(id)
+        builder.save()
+        return builder
+    }
+
+    /**
+     * load all schema from local storage
+     */
+    public static all() {
+        return Object.entries(localStorage)
+            .filter(([ key ]) => key.startsWith('@schema/'))
+            .map(([ key, value ]) => {
+                try {
+                    return new SchemaBuilder(key.slice(8), JSON.parse(value))
+                } catch (err) {
+                    console.error('failed to parse cache:', err)
+                    return null
+                }
+            })
+            .filter(builder => !!builder)
+    }
+
+    /**
+     * delete schema from local storage with given id
+     */
+    public static delete(id: string) {
+        localStorage.removeItem(`@schema/${ id }`)
+    }
+
     readonly #id: string
 
     public get id(): string {
@@ -84,24 +128,12 @@ class SchemaBuilder {
         return this.#schema
     }
 
-    /**
-     * load schema from local storage with given id,
-     * or create a new one if not found and save it to local storage
-     */
-    public static fromId(id: string) {
-        const tree = localStorage.getItem(`@schema/${ id }`)
+    public get name() {
+        return this.#schema.title
+    }
 
-        if(!!tree) {
-            try {
-                return new SchemaBuilder(id, JSON.parse(tree))
-            } catch (err) {
-                console.error('failed to parse cache:', err)
-            }
-        }
-
-        const builder = new SchemaBuilder(id)
-        builder.save()
-        return builder
+    public get description() {
+        return this.#schema.description
     }
 
     constructor(id: string, root?: SchemaRoot) {

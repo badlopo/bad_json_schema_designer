@@ -1,5 +1,5 @@
-import { createHashRouter, RouteObject } from "react-router-dom";
-import App from "@/page/App.tsx";
+import { createHashRouter, replace, RouteObject } from "react-router-dom";
+import { HomePage } from "@/page/home.tsx";
 import { DesignPage } from "@/page/design.tsx";
 import { RootLayout } from "@/route/layout.tsx";
 
@@ -9,7 +9,12 @@ const routes: RouteObject[] = [
         children: [
             {
                 path: '/',
-                element: <App/>,
+                loader: () => replace('/home'),
+            },
+            {
+                path: '/home',
+                loader: HomePage.loader,
+                element: <HomePage/>,
             },
             {
                 // design a json schema with interactive UI
