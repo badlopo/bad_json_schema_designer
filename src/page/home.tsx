@@ -29,10 +29,10 @@ function HomePage() {
                             <span>New</span>
                         </button>
                     </th>
-                    <th>Schema ID</th>
-                    <th>Name</th>
+                    <th className={ 'min-w-28' }>Schema ID</th>
+                    <th className={ 'min-w-24' }>Name</th>
                     <th>Description</th>
-                    <th>Actions</th>
+                    <th className={ 'w-24' }>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
