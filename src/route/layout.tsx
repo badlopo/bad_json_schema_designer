@@ -4,7 +4,7 @@ import { Tooltip } from "react-tooltip";
 const RootLayout = () => {
     return (
         <>
-            <Tooltip id={ 'tooltip-common' }/>
+            <Tooltip id={ 'tooltip-common' } className={ 'z-50' }/>
 
             <Outlet/>
         </>
